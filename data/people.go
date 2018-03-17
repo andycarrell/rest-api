@@ -1,11 +1,14 @@
-package main
+package data
 
+// Person entity.
 type Person struct {
 	ID        string   `json:"id,omitempty"`
 	Firstname string   `json:"firstname,omitempty"`
 	Lastname  string   `json:"lastname,omitempty"`
 	Address   *Address `json:"address,omitempty"`
 }
+
+// Address entity.
 type Address struct {
 	City  string `json:"city,omitempty"`
 	State string `json:"state,omitempty"`
@@ -13,16 +16,16 @@ type Address struct {
 
 var people []Person
 
-// Append p to the people list
+// Append p to the people list.
 func Append(p Person) []Person {
 	people = append(people, p)
 	return people
 }
 
-// Get list of people
+// Get list of people.
 func Get() []Person { return people }
 
-// Remove a person
+// Remove a person.
 func Remove(id string) []Person {
 	for index, item := range Get() {
 		if item.ID == id {

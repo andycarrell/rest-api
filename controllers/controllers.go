@@ -1,9 +1,10 @@
-package main
+package controllers
 
 import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/andycarrell/rest-api/data"
 	"github.com/gorilla/mux"
 )
 
@@ -14,29 +15,29 @@ type Route struct {
 	Handler func(w http.ResponseWriter, r *http.Request)
 }
 
-func getPeople(w http.ResponseWriter, r *http.Request) { json.NewEncoder(w).Encode(Get()) }
+func getPeople(w http.ResponseWriter, r *http.Request) { json.NewEncoder(w).Encode(data.Get()) }
 func getPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	for _, item := range Get() {
+	for _, item := range data.Get() {
 		if item.ID == params["id"] {
 			json.NewEncoder(w).Encode(item)
 			return
 		}
 	}
-	json.NewEncoder(w).Encode(&Person{})
+	json.NewEncoder(w).Encode(&data.Person{})
 }
 func createPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var person Person
+	var person data.Person
 	_ = json.NewDecoder(r.Body).Decode(&person)
 	person.ID = params["id"]
-	Append(person)
-	json.NewEncoder(w).Encode(Get())
+	data.Append(person)
+	json.NewEncoder(w).Encode(data.Get())
 }
 func deletePerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	Remove(params["id"])
-	json.NewEncoder(w).Encode(Get())
+	data.Remove(params["id"])
+	json.NewEncoder(w).Encode(data.Get())
 }
 
 // InitialiseRoutes returns an array of routes.
