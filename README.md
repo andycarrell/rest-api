@@ -2,8 +2,8 @@
 rest-api in go for learning
 
 ## Todo
-- [ ] Document functions etc
+- [x] Document functions etc
 - [ ] UPDATE
-- [ ] Relative imports
+- [x] Relative imports
 - [ ] Proper filtering
 - [ ] Validation
