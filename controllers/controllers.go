@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/andycarrell/rest-api/data"
@@ -18,16 +19,15 @@ type Route struct {
 func getPeople(w http.ResponseWriter, r *http.Request) { json.NewEncoder(w).Encode(data.Get()) }
 func getPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	for _, item := range data.Get() {
-		if item.ID == params["id"] {
-			json.NewEncoder(w).Encode(item)
-			return
-		}
-	}
-	json.NewEncoder(w).Encode(&data.Person{})
+	json.NewEncoder(w).Encode(data.GetByID(params["id"]))
 }
 func createPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+	var id = params["id"]
+	if data.GetByID(id).ID == id {
+		http.Error(w, fmt.Sprintf("Entity for ID: %s already exists", id), 400)
+		return
+	}
 	var person data.Person
 	_ = json.NewDecoder(r.Body).Decode(&person)
 	person.ID = params["id"]
@@ -37,6 +37,19 @@ func createPerson(w http.ResponseWriter, r *http.Request) {
 func deletePerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	data.Remove(params["id"])
+	json.NewEncoder(w).Encode(data.Get())
+}
+func updatePerson(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var id = params["id"]
+	if data.GetByID(id).ID != id {
+		http.Error(w, fmt.Sprintf("Entity for ID: %s doesn't exist", id), 400)
+		return
+	}
+	var person data.Person
+	_ = json.NewDecoder(r.Body).Decode(&person)
+	person.ID = id
+	data.Replace(id, person)
 	json.NewEncoder(w).Encode(data.Get())
 }
 
@@ -50,6 +63,7 @@ func InitialiseRoutes() []Route {
 	add(Route{Path: "/people/{id}", Method: "GET", Handler: getPerson})
 	add(Route{Path: "/people/{id}", Method: "POST", Handler: createPerson})
 	add(Route{Path: "/people/{id}", Method: "DELETE", Handler: deletePerson})
+	add(Route{Path: "/people/{id}", Method: "PUT", Handler: updatePerson})
 
 	return routes
 }
