@@ -5,5 +5,6 @@ rest-api in go for learning
 - [x] Document functions etc
 - [x] UPDATE
 - [x] Relative imports
-- [ ] Proper filtering
-- [ ] Validation
+- [x] Proper filtering
+- [x] Validation
+- [ ] Persistent database
