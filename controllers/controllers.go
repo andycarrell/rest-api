@@ -58,7 +58,22 @@ func InitialiseRoutes() []Route {
 	var routes []Route
 	var add = func(r Route) { routes = append(routes, r) }
 
-	add(Route{Path: "/", Method: "GET", Handler: func(w http.ResponseWriter, r *http.Request) { json.NewEncoder(w).Encode("ok") }})
+	add(Route{Path: "/", Method: "GET", Handler: func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("ok")
+
+		headers := w.Header()
+		headers.Add("Access-Control-Allow-Origin", "*")
+
+		json.NewEncoder(w).Encode("ok")
+	}})
+	add(Route{Path: "/error", Method: "GET", Handler: func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("ok")
+
+		headers := w.Header()
+		headers.Add("Access-Control-Allow-Origin", "*")
+
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+	}})
 	add(Route{Path: "/people", Method: "GET", Handler: getPeople})
 	add(Route{Path: "/people/{id}", Method: "GET", Handler: getPerson})
 	add(Route{Path: "/people/{id}", Method: "POST", Handler: createPerson})
